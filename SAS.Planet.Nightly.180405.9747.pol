@@ -1,0 +1,46 @@
+#!/bin/bash
+# Date : 2018-04-24 00:00
+# Last revision : 2018-04-24 00:00
+# Wine version used : 1.6.2
+# Distribution used to test : Debian 9.4
+# Author : Maksibon
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+
+TITLE="sas.planet.nightly"
+PREFIX="sas.planet.nightly"
+SHORTCUT_NAME="SAS Planet Nightly"
+ 
+POL_SetupWindow_Init
+
+POL_SetupWindow_presentation "$TITLE" "SAS.Team" "http://www.sasgis.org/programs/sasplanet/nightly.php" "Maksibon" "$TITLE"
+
+POL_Wine_SelectPrefix "$PREFIX"
+POL_Wine_PrefixCreate "1.6.2"
+Set_OS "winxp" 
+POL_System_TmpCreate "$PREFIX"
+ 
+POL_SetupWindow_InstallMethod "LOCAL,DOWNLOAD"
+ 
+if [ "$INSTALL_METHOD" = "LOCAL" ]
+then
+    POL_SetupWindow_browse "Please select the installation file to run." "$TITLE installation"
+    POL_SetupWindow_wait "Installation in progress." "$TITLE installation"
+    cp "$APP_ANSWER" "$POL_System_TmpDir"
+	cd "$POL_System_TmpDir"
+	7z x SAS.Planet.Nightly.7z -oSAS.Planet.Nightly
+	mv "SAS.Planet.Nightly" "$WINEPREFIX/drive_c/Program Files/SAS.Planet"
+elif [ "$INSTALL_METHOD" = "DOWNLOAD" ]
+then
+    cd "$POL_System_TmpDir"
+    POL_Download "http://dl.bintray.com/zed/SASPlanet/SAS.Planet.Nightly.180405.9747.7z"
+	7z x SAS.Planet.Nightly.180405.9747.7z -oSAS.Planet.Nightly
+	mv "SAS.Planet.Nightly" "$WINEPREFIX/drive_c/Program Files/SAS.Planet.Nightly"
+fi
+ 
+POL_System_TmpDelete
+ 
+POL_Shortcut "SASPlanet.exe" "SAS Planet Nightly"
+ 
+POL_SetupWindow_Close
+exit
